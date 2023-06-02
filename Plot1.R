@@ -1,0 +1,6 @@
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+ems <- tapply(NEI$Emissions, NEI$year, sum)
+png("plot1.png")
+barplot(ems/1000000, xlab = "Year", ylab = "PM2.5 Emissions (millions of tons)", main = "Total PM2.5 Emissions in US by Year", ylim = c(0,8))
+dev.off()

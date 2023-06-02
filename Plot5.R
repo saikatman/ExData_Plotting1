@@ -1,0 +1,15 @@
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+moveh <- grepl("vehicle", SCC$EI.Sector, ignore.case = TRUE)
+SCC_moveh <- SCC[moveh,]
+moveh_NEI <- merge(NEI, SCC_moveh, by = "SCC")
+bltm_moveh <- subset(moveh_NEI, fips == "24510")
+bltm_mv <- tapply(bltm_moveh$Emissions, bltm_moveh$year, sum)
+bltm_mv <- as.data.frame(bltm_mv)
+names(bltm_mv)[1] <- "Emissions"
+rownames(bltm_mv) <- c(1:4)
+bltm_mv$Year <- c(1999, 2002, 2005, 2008)
+library(ggplot2)
+png("plot5.png")
+ggplot(bltm_mv, aes(x = Year, y = Emissions)) + geom_line() + geom_point() + xlab("Year") + ylab("Total PM.25 Emissions (tons)") + ggtitle("Total PM2.5 Emissions from Motor Vehicle Sources in Baltimore by Year")
+dev.off()

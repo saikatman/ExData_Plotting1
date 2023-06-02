@@ -1,0 +1,12 @@
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+moveh <- grepl("vehicle", SCC$EI.Sector, ignore.case = TRUE)
+SCC_moveh <- SCC[moveh,]
+moveh_NEI <- merge(NEI, SCC_moveh, by = "SCC")
+bltmLA <- subset(moveh_NEI, fips == "24510" | fips == "06037")
+bltmLA$city <- ifelse(bltmLA$fips == "24510", "Baltimore", "Los Angeles")
+bltmLA_ems <- aggregate(Emissions ~ year + city, bltmLA, sum)
+library(ggplot2)
+png("plot6.png")
+ggplot(bltmLA_ems, aes(x = year, y = Emissions, color = city)) + geom_line() + geom_point() + xlab("Year") + ylab("Total PM.25 Emissions (tons)") + ggtitle("Total Motor Vehicle Sources PM2.5 Emissions in Baltimore vs. Los Angeles")
+dev.off()
